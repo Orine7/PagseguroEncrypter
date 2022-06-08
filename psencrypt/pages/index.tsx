@@ -6,13 +6,15 @@ import { useState } from 'react'
 import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
+  const [encryptedCard, setCard] = useState('')
   const [infos, setInfos] = useState({
-    publicKey: '',
-    buyerName: '',
-    expMonth: 0,
-    expYear: 0,
-    cvv: '',
-    cardNumber: '',
+    publicKey:
+      'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwlLWkoUk5zIGr5KbEvcXoeP5ovGxiaMIgObIYJYMUWWMjDseIRI3t9gh6efi2tsLq0nKIIYdfd8S6/mAET1F24gQISIOSKs4OOmg90K2Xd/o50O7V1dZh0XipCEmaQBJW6wdZaqepmf2jI9WH1PFLRrWa6jPbkVtqJorJ/+f2cGcXumpm3mK/ytKGE2C165Ec9Xqvwn03iN9BAy02BsN4UX68KFYDp41QFo6Bze+EjcSvk+2vJyzKOxZJwpRNF8WCFRQ0YnRvJNl+wpn2C2XRtkNt8oX0iwPvxmDdKWtK6RevnoXX/cJeSH3jztvKO3FGlYIbJQcZppj/u7rJsvyzwIDAQAB',
+    buyerName: 'Zé da Silva',
+    expMonth: 10,
+    expYear: 2030,
+    cvv: '123',
+    cardNumber: '4111111111111111',
   })
 
   const handleChange = (event: { target: { name: any; value: any } }) => {
@@ -23,6 +25,7 @@ const Home: NextPage = () => {
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
     //@ts-ignore
     const card = PagSeguro.encryptCard({
       publicKey: infos.publicKey,
@@ -32,16 +35,22 @@ const Home: NextPage = () => {
       expYear: infos.expYear,
       securityCode: infos.cvv,
     })
+    if (card.hasErrors) {
+      card.errors.forEach((error: { code: string; message: string }) => {
+        alert(error.message)
+      })
+    }
 
-    event.preventDefault()
-
-    alert(JSON.stringify(card))
+    setCard(
+      card.encryptedCard ?? 'Ocorreu um erro ao gerar o cartão criptografado',
+    )
   }
   return (
     <div className={styles.container}>
       <a href="http://localhost:3000/next">
         <button>Debug</button>
       </a>
+
       <Script src="https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"></Script>
       <Head>
         <title>PSEncriptador</title>
@@ -64,7 +73,7 @@ const Home: NextPage = () => {
             <label>
               Ponha sua chave publica:{' '}
               <input
-                type="password"
+                type="text"
                 name="publicKey"
                 value={infos.publicKey}
                 onChange={handleChange}
@@ -84,6 +93,8 @@ const Home: NextPage = () => {
               <input
                 type="text"
                 name="cardNumber"
+                maxLength={19}
+                minLength={13}
                 value={infos.cardNumber}
                 onChange={handleChange}
               />{' '}
@@ -92,6 +103,8 @@ const Home: NextPage = () => {
               Mês que expira:{' '}
               <input
                 type="text"
+                maxLength={2}
+                minLength={2}
                 name="expMonth"
                 value={infos.expMonth}
                 onChange={handleChange}
@@ -102,6 +115,8 @@ const Home: NextPage = () => {
               <input
                 type="text"
                 name="expYear"
+                maxLength={4}
+                minLength={4}
                 value={infos.expYear}
                 onChange={handleChange}
               />{' '}
@@ -111,12 +126,19 @@ const Home: NextPage = () => {
               <input
                 type="text"
                 name="cvv"
+                maxLength={3}
+                minLength={3}
                 value={infos.cvv}
                 onChange={handleChange}
               />{' '}
             </label>
             <input type="submit" value="Encriptar" />
           </form>
+
+          <div>
+            <h2>Resultado</h2>
+            <p className={styles.card}>{encryptedCard}</p>
+          </div>
         </div>
       </main>
 
