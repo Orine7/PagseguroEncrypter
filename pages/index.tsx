@@ -1,11 +1,13 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Script from 'next/script'
-import { useState } from 'react'
-import styles from '../styles/Home.module.css'
+import { ChangeEvent, useState } from 'react'
+
+import FormField from '../components/form'
 
 const Home: NextPage = () => {
   const [encryptedCard, setCard] = useState('')
+
   const [infos, setInfos] = useState({
     publicKey:
       'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwlLWkoUk5zIGr5KbEvcXoeP5ovGxiaMIgObIYJYMUWWMjDseIRI3t9gh6efi2tsLq0nKIIYdfd8S6/mAET1F24gQISIOSKs4OOmg90K2Xd/o50O7V1dZh0XipCEmaQBJW6wdZaqepmf2jI9WH1PFLRrWa6jPbkVtqJorJ/+f2cGcXumpm3mK/ytKGE2C165Ec9Xqvwn03iN9BAy02BsN4UX68KFYDp41QFo6Bze+EjcSvk+2vJyzKOxZJwpRNF8WCFRQ0YnRvJNl+wpn2C2XRtkNt8oX0iwPvxmDdKWtK6RevnoXX/cJeSH3jztvKO3FGlYIbJQcZppj/u7rJsvyzwIDAQAB',
@@ -16,11 +18,10 @@ const Home: NextPage = () => {
     cardNumber: '4111111111111111',
   })
 
-  const handleChange = (event: { target: { name: any; value: any } }) => {
-    const name = event.target.name
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const id = event.target.id.split('_')[1]
     const value = event.target.value
-
-    setInfos((values) => ({ ...values, [name]: value }))
+    setInfos((values) => ({ ...values, [id]: value }))
   }
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -39,14 +40,15 @@ const Home: NextPage = () => {
         alert(error.message)
       })
     }
+    navigator.clipboard.writeText(card.encryptedCard)
 
     setCard(
       card.encryptedCard ?? 'Ocorreu um erro ao gerar o cartão criptografado',
     )
   }
   return (
-    <div className={styles.container}>
-      <a href="http://localhost:3000/next">
+    <div className="container flex items-center p-4 mx-auto min-h-screen justify-center">
+      <a href="http://localhost:3000/next" className="hidden">
         <button>Debug</button>
       </a>
 
@@ -60,88 +62,93 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <div>
-          <h1>Bem vindo ao encriptador!</h1>
-          <p>
-            Esse projeto foi feito para ajudar a encriptar cartões usando um
-            sistema que funcione e seja compativel com a PagSeguro.
-          </p>
-          <p>Preencha o formulário abaixo para encriptar o cartão.</p>
-          <form className={styles.form} onSubmit={handleSubmit}>
-            <label>
-              Ponha sua chave publica:{' '}
-              <input
-                type="text"
-                name="publicKey"
-                value={infos.publicKey}
-                onChange={handleChange}
-              />{' '}
-            </label>
-            <label>
-              Nome do comprador:{' '}
-              <input
-                type="text"
-                name="buyerName"
-                value={infos.buyerName}
-                onChange={handleChange}
-              />{' '}
-            </label>
-            <label>
-              Numero do cartão:{' '}
-              <input
-                type="text"
-                name="cardNumber"
-                maxLength={19}
-                minLength={13}
-                value={infos.cardNumber}
-                onChange={handleChange}
-              />{' '}
-            </label>
-            <label>
-              Mês que expira:{' '}
-              <input
-                type="text"
-                maxLength={2}
-                minLength={2}
-                name="expMonth"
-                value={infos.expMonth}
-                onChange={handleChange}
-              />{' '}
-            </label>
-            <label>
-              Ano que expira:{' '}
-              <input
-                type="text"
-                name="expYear"
-                maxLength={4}
-                minLength={4}
-                value={infos.expYear}
-                onChange={handleChange}
-              />{' '}
-            </label>
-            <label>
-              Código de segurança(cvv):{' '}
-              <input
-                type="text"
-                name="cvv"
-                maxLength={3}
-                minLength={3}
-                value={infos.cvv}
-                onChange={handleChange}
-              />{' '}
-            </label>
-            <input type="submit" value="Encriptar" />
-          </form>
+      <main className="h-full max-h-full">
+        <h1>Bem vindo ao encriptador!</h1>
+        <p>
+          Esse projeto foi feito para ajudar a encriptar cartões usando um
+          sistema que funcione e seja compativel com a PagSeguro.
+        </p>
+        <p>Preencha o formulário abaixo para encriptar o cartão.</p>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group mb-6">
+            <FormField
+              name="publicKey"
+              placeholder="Chave Pública"
+              value={infos.publicKey}
+              onChange={handleChange}
+              options={{ type: 'text' }}
+            ></FormField>
+            <FormField
+              name="buyerName"
+              placeholder="Nome do comprador"
+              value={infos.buyerName}
+              onChange={handleChange}
+              options={{ type: 'text' }}
+            ></FormField>
+            <FormField
+              name="cardNumber"
+              placeholder="Numero do cartão"
+              value={infos.cardNumber}
+              onChange={handleChange}
+              options={{ type: 'text', maxLength: 19, minLength: 13 }}
+            ></FormField>
+            <FormField
+              name="expMonth"
+              placeholder="Mês que expira"
+              value={infos.expMonth}
+              onChange={handleChange}
+              options={{ type: 'number', maxLength: 2, minLength: 2 }}
+            ></FormField>
+            <FormField
+              name="expYear"
+              placeholder="Ano que expira"
+              value={infos.expYear}
+              onChange={handleChange}
+              options={{ type: 'number', maxLength: 4, minLength: 4 }}
+            ></FormField>
+            <FormField
+              name="cvv"
+              placeholder="Código de segurança(cvv)"
+              value={infos.cvv}
+              onChange={handleChange}
+              options={{ type: 'number', maxLength: 3, minLength: 3 }}
+            ></FormField>
+            <button
+              type="submit"
+              className="
+              px-6
+              py-3
+              bg-blue-600
+              text-white
+              font-big
+              text-xs
+              leading-tight
+              uppercase
+              rounded
+              shadow-md
+              hover:bg-blue-700 hover:shadow-lg
+              focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0
+              active:bg-blue-800 active:shadow-lg
+              transition
+              duration-150
+              ease-in-out"
+            >
+              Encriptar
+            </button>
+          </div>
+        </form>
 
-          <div>
-            <h2>Resultado</h2>
-            <p className={styles.card}>{encryptedCard}</p>
+        <div className="flex justify-center">
+          <div className="block p-6 rounded-lg shadow-lg bg-white max-w-xl min-w-full">
+            <h5 className="text-gray-900 text-xl leading-tight font-medium mb-2">
+              Resultado
+            </h5>
+            <p className="text-gray-700 text-base mb-4 break-all h-24">
+              {encryptedCard}
+            </p>
           </div>
         </div>
       </main>
-
-      <footer className={styles.footer}></footer>
     </div>
   )
 }
