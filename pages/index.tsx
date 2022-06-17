@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import Image from 'next/image'
 import Script from 'next/script'
 import { ChangeEvent, useState } from 'react'
 
@@ -40,18 +41,14 @@ const Home: NextPage = () => {
         alert(error.message)
       })
     }
-    navigator.clipboard.writeText(card.encryptedCard)
+    //navigator.clipboard.writeText(card.encryptedCard)
 
     setCard(
       card.encryptedCard ?? 'Ocorreu um erro ao gerar o cartão criptografado',
     )
   }
   return (
-    <div className="container flex items-center p-4 mx-auto min-h-screen justify-center">
-      <a href="http://localhost:3000/next" className="hidden">
-        <button>Debug</button>
-      </a>
-
+    <>
       <Script src="https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"></Script>
       <Head>
         <title>PSEncriptador</title>
@@ -59,97 +56,117 @@ const Home: NextPage = () => {
           name="description"
           content="Esse site foi criado para ser rodado localmente para Encriptar de forma fácil o jeito que a pagseguro faz com seus cartões"
         />
-        <link rel="icon" href="/favicon.ico" />
+        <link
+          rel="icon"
+          href="https://assets.pagseguro.com.br/ps-bootstrap/v6.82.1/img/favicon.ico"
+        />
       </Head>
 
-      <main className="h-full max-h-full">
-        <h1>Bem vindo ao encriptador!</h1>
-        <p>
-          Esse projeto foi feito para ajudar a encriptar cartões usando um
-          sistema que funcione e seja compativel com a PagSeguro.
-        </p>
-        <p>Preencha o formulário abaixo para encriptar o cartão.</p>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group mb-6">
-            <FormField
-              name="publicKey"
-              placeholder="Chave Pública"
-              value={infos.publicKey}
-              onChange={handleChange}
-              options={{ type: 'text' }}
-            ></FormField>
-            <FormField
-              name="buyerName"
-              placeholder="Nome do comprador"
-              value={infos.buyerName}
-              onChange={handleChange}
-              options={{ type: 'text' }}
-            ></FormField>
-            <FormField
-              name="cardNumber"
-              placeholder="Numero do cartão"
-              value={infos.cardNumber}
-              onChange={handleChange}
-              options={{ type: 'text', maxLength: 19, minLength: 13 }}
-            ></FormField>
-            <FormField
-              name="expMonth"
-              placeholder="Mês que expira"
-              value={infos.expMonth}
-              onChange={handleChange}
-              options={{ type: 'number', maxLength: 2, minLength: 2 }}
-            ></FormField>
-            <FormField
-              name="expYear"
-              placeholder="Ano que expira"
-              value={infos.expYear}
-              onChange={handleChange}
-              options={{ type: 'number', maxLength: 4, minLength: 4 }}
-            ></FormField>
-            <FormField
-              name="cvv"
-              placeholder="Código de segurança(cvv)"
-              value={infos.cvv}
-              onChange={handleChange}
-              options={{ type: 'number', maxLength: 3, minLength: 3 }}
-            ></FormField>
-            <button
-              type="submit"
-              className="
-              px-6
-              py-3
-              bg-blue-600
-              text-white
-              font-big
-              text-xs
-              leading-tight
-              uppercase
-              rounded
-              shadow-md
-              hover:bg-blue-700 hover:shadow-lg
-              focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0
-              active:bg-blue-800 active:shadow-lg
-              transition
-              duration-150
-              ease-in-out"
-            >
-              Encriptar
-            </button>
+      <div className="container flex items-center min-h-screen min-w-full justify-center bg-green-700">
+        <main className="min-h-screen bg-green-100 w-6/12">
+          <div className="mx-auto">
+            <div className="inline-block ml-32 mt-4 relative">
+              <Image src="/pagseguro_logo.png" width={175} height={175} />
+            </div>
+            <div className="inline-block">
+              <h1 className="text-3xl font-bold text-center text-green-900 mx-4">
+                PagSeguro Encriptador
+              </h1>
+              <p className="text-center mx-4">
+                Preencha os dados e encripte agora!
+              </p>
+            </div>
           </div>
-        </form>
-
-        <div className="flex justify-center">
-          <div className="block p-6 rounded-lg shadow-lg bg-white max-w-xl min-w-full">
-            <h5 className="text-gray-900 text-xl leading-tight font-medium mb-2">
-              Resultado
-            </h5>
-            <p className="text-gray-700 text-base mb-4 break-all h-24">
-              {encryptedCard}
-            </p>
+          <div className="block p-6 max-w-xl min-w-full">
+            <form onSubmit={handleSubmit}>
+              <div>
+                <FormField
+                  name="publicKey"
+                  placeholder="Chave Pública"
+                  value={infos.publicKey}
+                  onChange={handleChange}
+                  options={{ type: 'text' }}
+                ></FormField>
+                <FormField
+                  name="buyerName"
+                  placeholder="Nome do comprador"
+                  value={infos.buyerName}
+                  onChange={handleChange}
+                  options={{ type: 'text' }}
+                ></FormField>
+                <FormField
+                  name="cardNumber"
+                  placeholder="Numero do cartão"
+                  value={infos.cardNumber}
+                  onChange={handleChange}
+                  options={{ type: 'text', maxLength: 19, minLength: 13 }}
+                ></FormField>
+                <FormField
+                  name="expMonth"
+                  placeholder="Mês que expira"
+                  value={infos.expMonth}
+                  onChange={handleChange}
+                  options={{ type: 'number', maxLength: 2, minLength: 2 }}
+                ></FormField>
+                <FormField
+                  name="expYear"
+                  placeholder="Ano que expira"
+                  value={infos.expYear}
+                  onChange={handleChange}
+                  options={{ type: 'number', maxLength: 4, minLength: 4 }}
+                ></FormField>
+                <FormField
+                  name="cvv"
+                  placeholder="Código de segurança(cvv)"
+                  value={infos.cvv}
+                  onChange={handleChange}
+                  options={{ type: 'number', maxLength: 3, minLength: 3 }}
+                ></FormField>
+                <button
+                  type="submit"
+                  className="
+                px-6
+                py-3
+                mb-4
+                bg-green-300
+                font-big
+                text-xs
+                leading-tight
+                uppercase
+                rounded
+                shadow-md
+                hover:bg-green-700 hover:shadow-lg
+                focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0
+                active:bg-green-800 active:shadow-lg
+                transition
+                duration-150
+                ease-in-out"
+                >
+                  Encriptar
+                </button>
+              </div>
+            </form>
+            <div>
+              <h5 className=" inline-block text-xl leading-tight font-medium mb-2 pr-2">
+                Resultado
+              </h5>
+              <button
+                className="rounded-md hover:bg-green-400 hover:shadow-lg
+                active:bg-green-600 active:shadow-lg ease-in-out"
+                onClick={() => {
+                  navigator.clipboard.writeText(encryptedCard)
+                }}
+              >
+                <Image src="/copy.svg" alt="Copy" width={20} height={20} />
+              </button>
+              <p className="text-base break-all p-4 h-30 rounded-md bg-green-300 ">
+                {encryptedCard}
+              </p>
+            </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   )
 }
 
