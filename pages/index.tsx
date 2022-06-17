@@ -5,8 +5,10 @@ import Script from 'next/script'
 import { ChangeEvent, useState } from 'react'
 
 import FormField from '../components/form'
+import SideBar from '../components/sidebar'
 
 const Home: NextPage = () => {
+  const [isOpen, setOpenValue] = useState(false)
   const [encryptedCard, setCard] = useState('')
 
   const [infos, setInfos] = useState({
@@ -61,14 +63,29 @@ const Home: NextPage = () => {
           href="https://assets.pagseguro.com.br/ps-bootstrap/v6.82.1/img/favicon.ico"
         />
       </Head>
-
-      <div className="container flex items-center min-h-screen min-w-full justify-center bg-green-700">
+      <SideBar
+        isOpen={isOpen}
+        onClick={(e) => {
+          e.preventDefault()
+          setOpenValue(!isOpen)
+        }}
+      />
+      <button
+        className="fixed top-0 left-0 m-6"
+        onClick={(e) => {
+          e.preventDefault()
+          setOpenValue(!isOpen)
+        }}
+      >
+        <Image src="/info.svg" alt="Info" width={50} height={50} />
+      </button>
+      <div className="container flex items-center justify-center min-h-screen min-w-full  bg-green-600">
         <main className="min-h-screen bg-green-100 w-6/12">
-          <div className="mx-auto">
-            <div className="inline-block ml-32 mt-4 relative">
+          <div className=" flex justify-center items-center">
+            <div className="">
               <Image src="/pagseguro_logo.png" width={175} height={175} />
             </div>
-            <div className="inline-block">
+            <div className="">
               <h1 className="text-3xl font-bold text-center text-green-900 mx-4">
                 PagSeguro Encriptador
               </h1>
