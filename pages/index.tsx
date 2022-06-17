@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Script from 'next/script'
 import { ChangeEvent, useState } from 'react'
+import MyBtn from '../components/button'
 
 import FormField from '../components/form'
 import SideBar from '../components/sidebar'
@@ -27,7 +28,7 @@ const Home: NextPage = () => {
     setInfos((values) => ({ ...values, [id]: value }))
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     //@ts-ignore
     const card = PagSeguro.encryptCard({
@@ -69,6 +70,18 @@ const Home: NextPage = () => {
           e.preventDefault()
           setOpenValue(!isOpen)
         }}
+        setStdValues={(e) => {
+          e.preventDefault()
+          setInfos({
+            publicKey:
+              'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwlLWkoUk5zIGr5KbEvcXoeP5ovGxiaMIgObIYJYMUWWMjDseIRI3t9gh6efi2tsLq0nKIIYdfd8S6/mAET1F24gQISIOSKs4OOmg90K2Xd/o50O7V1dZh0XipCEmaQBJW6wdZaqepmf2jI9WH1PFLRrWa6jPbkVtqJorJ/+f2cGcXumpm3mK/ytKGE2C165Ec9Xqvwn03iN9BAy02BsN4UX68KFYDp41QFo6Bze+EjcSvk+2vJyzKOxZJwpRNF8WCFRQ0YnRvJNl+wpn2C2XRtkNt8oX0iwPvxmDdKWtK6RevnoXX/cJeSH3jztvKO3FGlYIbJQcZppj/u7rJsvyzwIDAQAB',
+            buyerName: 'Zé da Silva',
+            expMonth: 10,
+            expYear: 2030,
+            cvv: '123',
+            cardNumber: '4111111111111111',
+          })
+        }}
       />
       <button
         className="fixed top-0 left-0 m-6"
@@ -95,7 +108,7 @@ const Home: NextPage = () => {
             </div>
           </div>
           <div className="block p-6 max-w-xl min-w-full">
-            <form onSubmit={handleSubmit}>
+            <form>
               <div>
                 <FormField
                   name="publicKey"
@@ -139,28 +152,9 @@ const Home: NextPage = () => {
                   onChange={handleChange}
                   options={{ type: 'number', maxLength: 3, minLength: 3 }}
                 ></FormField>
-                <button
-                  type="submit"
-                  className="
-                px-6
-                py-3
-                mb-4
-                bg-green-300
-                font-big
-                text-xs
-                leading-tight
-                uppercase
-                rounded
-                shadow-md
-                hover:bg-green-700 hover:shadow-lg
-                focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0
-                active:bg-green-800 active:shadow-lg
-                transition
-                duration-150
-                ease-in-out"
-                >
+                <MyBtn mx="0" onClick={handleSubmit}>
                   Encriptar
-                </button>
+                </MyBtn>
               </div>
             </form>
             <div>
