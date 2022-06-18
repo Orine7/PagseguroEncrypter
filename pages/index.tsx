@@ -51,11 +51,11 @@ const Home: NextPage = () => {
       return
     }
 
-    const result = await executeRecaptcha('SignUp')
+    const result = await executeRecaptcha('test')
 
     setToken(result)
 
-    const test = await fetch('http://localhost:5000/payments/recaptcha', {
+    const test = await fetch('null', {
       headers: {
         'Content-Type': 'application/json',
         recaptcha: result,
