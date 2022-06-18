@@ -8,8 +8,8 @@ type Props = {
 }
 
 export const button_style = (
-  mx: string | undefined,
-  my: string | undefined,
+  mx?: string | undefined,
+  my?: string | undefined,
 ) => `inline-flex items-center 
                 px-6
                 py-3

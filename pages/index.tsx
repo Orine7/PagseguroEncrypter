@@ -3,14 +3,16 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Script from 'next/script'
 import { ChangeEvent, useState } from 'react'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import MyBtn from '../components/button'
-
 import FormField from '../components/form'
 import SideBar from '../components/sidebar'
 
 const Home: NextPage = () => {
+  const [token, setToken] = useState('')
   const [isOpen, setOpenValue] = useState(false)
   const [encryptedCard, setCard] = useState('')
+  const { executeRecaptcha } = useGoogleReCaptcha()
 
   const [infos, setInfos] = useState({
     publicKey:
@@ -28,7 +30,7 @@ const Home: NextPage = () => {
     setInfos((values) => ({ ...values, [id]: value }))
   }
 
-  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     //@ts-ignore
     const card = PagSeguro.encryptCard({
@@ -44,7 +46,24 @@ const Home: NextPage = () => {
         alert(error.message)
       })
     }
-    //navigator.clipboard.writeText(card.encryptedCard)
+
+    if (!executeRecaptcha) {
+      return
+    }
+
+    const result = await executeRecaptcha('SignUp')
+
+    setToken(result)
+
+    const test = await fetch('http://localhost:5000/payments/recaptcha', {
+      headers: {
+        'Content-Type': 'application/json',
+        recaptcha: result,
+      },
+      method: 'POST',
+    })
+    const res = await test.json()
+    console.log(res)
 
     setCard(
       card.encryptedCard ?? 'Ocorreu um erro ao gerar o cartão criptografado',
