@@ -3,17 +3,14 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Script from 'next/script'
 import { ChangeEvent, useState } from 'react'
-import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { toast } from 'react-toastify'
 import MyBtn from '../components/button'
 import FormField from '../components/form'
 import SideBar from '../components/sidebar'
 
 const Home: NextPage = () => {
-  const [token, setToken] = useState('')
   const [isOpen, setOpenValue] = useState(false)
   const [encryptedCard, setCard] = useState('')
-  const { executeRecaptcha } = useGoogleReCaptcha()
 
   const [infos, setInfos] = useState({
     publicKey:
@@ -55,24 +52,6 @@ const Home: NextPage = () => {
         toast.error(messageFixer[error.code])
       })
     }
-
-    if (!executeRecaptcha) {
-      return
-    }
-
-    const result = await executeRecaptcha('test')
-
-    setToken(result)
-
-    // const test = await fetch('null', {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     recaptcha: result,
-    //   },
-    //   method: 'POST',
-    // })
-    // const res = await test.json()
-    // console.log(result)
 
     setCard(
       card.encryptedCard ?? 'Ocorreu um erro ao gerar o cartão criptografado',
