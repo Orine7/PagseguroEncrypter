@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Script from 'next/script'
 import { ChangeEvent, useState } from 'react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { toast } from 'react-toastify'
 import MyBtn from '../components/button'
 import FormField from '../components/form'
 import SideBar from '../components/sidebar'
@@ -42,8 +43,16 @@ const Home: NextPage = () => {
       securityCode: infos.cvv,
     })
     if (card.hasErrors) {
+      const messageFixer: Record<string, string> = {
+        INVALID_NUMBER: 'Número do cartão inválido',
+        INVALID_EXPIRATION_MONTH: 'Mês de vencimento inválido',
+        INVALID_EXPIRATION_YEAR: 'Ano de vencimento inválido',
+        INVALID_SECURITY_CODE: 'Código de segurança inválido',
+        INVALID_HOLDER: 'Nome do titular do cartão inválido',
+        INVALID_PUBLIC_KEY: 'Chave pública inválida',
+      }
       card.errors.forEach((error: { code: string; message: string }) => {
-        alert(error.message)
+        toast.error(messageFixer[error.code])
       })
     }
 
@@ -55,15 +64,15 @@ const Home: NextPage = () => {
 
     setToken(result)
 
-    const test = await fetch('null', {
-      headers: {
-        'Content-Type': 'application/json',
-        recaptcha: result,
-      },
-      method: 'POST',
-    })
-    const res = await test.json()
-    console.log(res)
+    // const test = await fetch('null', {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     recaptcha: result,
+    //   },
+    //   method: 'POST',
+    // })
+    // const res = await test.json()
+    // console.log(result)
 
     setCard(
       card.encryptedCard ?? 'Ocorreu um erro ao gerar o cartão criptografado',
@@ -185,6 +194,7 @@ const Home: NextPage = () => {
                 active:bg-green-600 active:shadow-lg ease-in-out"
                 onClick={() => {
                   navigator.clipboard.writeText(encryptedCard)
+                  toast.info('Copiado para a área de transferência!')
                 }}
               >
                 <Image src="/copy.svg" alt="Copy" width={20} height={20} />
